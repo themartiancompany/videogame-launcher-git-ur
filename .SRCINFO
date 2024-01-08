@@ -7,8 +7,10 @@ pkgbase = ur-git
 	license = AGPL3
 	checkdepends = shellcheck
 	makedepends = git
+	depends = aspe
+	depends = reallymakepkg
 	optdepends = git
-	source = ur-git::git+https://gitlab.archlinux.org/tallero/ur.git
+	source = ur-git::git+https://github.com//ur.git
 	sha256sums = SKIP
 
 pkgname = ur-git
