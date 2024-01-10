@@ -1,6 +1,6 @@
 pkgbase = ur-git
 	pkgdesc = (A)ur helper
-	pkgver = 0.1
+	pkgver = v0.1.1
 	pkgrel = 2
 	url = https://www.humaninstrumentalityproject.org
 	arch = any

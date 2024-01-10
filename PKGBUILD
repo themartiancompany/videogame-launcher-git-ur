@@ -11,7 +11,7 @@ pkgname=(
 )
 pkgdesc="(A)ur helper"
 url="https://www.humaninstrumentalityproject.org"
-pkgver=0.1
+pkgver="v0.1.1"
 pkgrel=2
 license=(
   'AGPL3')
