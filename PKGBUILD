@@ -9,17 +9,23 @@ pkgbase="${_pkgbase}-git"
 pkgname=(
   "${pkgbase}"
 )
-pkgdesc="(A)ur helper."
+pkgdesc="(A)ur helper"
 url="https://www.humaninstrumentalityproject.org"
 pkgver=0.1
 pkgrel=2
-license=('AGPL3')
+license=(
+  'AGPL3')
 _arch_ns="tallero"
 _gh_ns="theamericancompany"
-_arch="https://gitlab.archlinux.org"
-_gh="https://github.com"
-_http="${_gh}"
-_url="${_http}/${_ns}/${_pkgbase}"
+_arch="gitlab.archlinux.org"
+_gh="github.com"
+_host="${_gh}"
+_ns="${_gh_ns}"
+_ssh="ssh://git@${_host}:${_ns}/${_pkgbase}"
+_local="file://${HOME}/${_pkgbase}"
+_http="https://${_host}/${_ns}/${_pkgbase}"
+# _url="${_local}"
+_url="${_http}"
 depends=(
   "aspe"
   "reallymakepkg"
@@ -36,18 +42,29 @@ optdepends=(
 arch=(
   any
 )
-_ns="tallero"
 source=(
   "${pkgname}::git+${_url}.git"
+  # "${pkgname}::git+${_local}"
 )
 sha256sums=(
   'SKIP'
 )
 
+pkgver() {
+  cd \
+    "${pkgname}"
+  git \
+    describe \
+    --tags | \
+    sed 's/-/+/g'
+}
+
 check() {
   cd \
     "${pkgname}"
-  make -k check
+  make \
+    -k \
+    check
 }
 
 package() {

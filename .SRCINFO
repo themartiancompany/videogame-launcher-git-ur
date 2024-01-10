@@ -1,5 +1,5 @@
 pkgbase = ur-git
-	pkgdesc = (A)ur helper.
+	pkgdesc = (A)ur helper
 	pkgver = 0.1
 	pkgrel = 2
 	url = https://www.humaninstrumentalityproject.org
@@ -10,7 +10,7 @@ pkgbase = ur-git
 	depends = aspe
 	depends = reallymakepkg
 	optdepends = git
-	source = ur-git::git+https://github.com//ur.git
+	source = ur-git::git+https://github.com/theamericancompany/ur.git
 	sha256sums = SKIP
 
 pkgname = ur-git
