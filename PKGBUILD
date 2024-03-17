@@ -11,7 +11,7 @@ pkgname=(
 )
 pkgdesc="(A)ur helper"
 url="https://www.humaninstrumentalityproject.org"
-pkgver="v0.1.1"
+pkgver="0.1.1"
 pkgrel=2
 license=(
   'AGPL3'
@@ -25,11 +25,11 @@ _ns="${_gh_ns}"
 _ssh="ssh://git@${_host}:${_ns}/${_pkgbase}"
 _local="file://${HOME}/${_pkgbase}"
 _http="https://${_host}/${_ns}/${_pkgbase}"
-# _url="${_local}"
 _url="${_http}"
 depends=(
   "aspe"
   "reallymakepkg"
+  "sus"
 )
 makedepends=(
   'git'
@@ -43,9 +43,11 @@ optdepends=(
 arch=(
   any
 )
+[[ "${_offline}" == "true" ]] && \
+  _url="${_local}"
+_branch="master"
 source=(
-  "${pkgname}::git+${_url}.git"
-  # "${pkgname}::git+${_local}"
+  "${pkgname}::git+${_url}#branch=${_branch}"
 )
 sha256sums=(
   'SKIP'
