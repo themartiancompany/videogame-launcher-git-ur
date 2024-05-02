@@ -4,6 +4,7 @@
 # Maintainer: Truocolo <truocolo@aol.com>
 # Contributor: Fabio Castelli (muflone) <webreg@muflone.com>
 
+_offline="false"
 _pkgbase=ur
 pkgbase="${_pkgbase}-git"
 pkgname=(
@@ -28,6 +29,7 @@ _http="https://${_host}/${_ns}/${_pkgbase}"
 _url="${_http}"
 depends=(
   "aspe"
+  "libcrash-bash"
   "reallymakepkg"
   "sus"
 )

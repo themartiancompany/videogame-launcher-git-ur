@@ -8,6 +8,7 @@ pkgbase = ur-git
 	checkdepends = shellcheck
 	makedepends = git
 	depends = aspe
+	depends = libcrash-bash
 	depends = reallymakepkg
 	depends = sus
 	optdepends = git
