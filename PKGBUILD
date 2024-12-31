@@ -266,7 +266,7 @@ package_ur-contracts-git() {
   fi
 }
 
-package_ur() {
+package_ur-git() {
   local \
     _make_opts=()
   depends+=(
