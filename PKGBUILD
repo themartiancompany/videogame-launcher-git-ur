@@ -12,13 +12,15 @@ _offline='false'
 _solc="true"
 _hardhat="true"
 _proj="hip"
+_Proj="humaninstrumentalityproject"
 _pkg=ur
 _pkgbase="${_pkg}"
-_pkgname="${_pkgbase}"
+_pkgname="${_pkg}"
 _offline="false"
-pkgbase="${_pkgbase}-git"
+pkgbase="${_pkg}-git"
 pkgname=(
   "${pkgbase}"
+  "${_pkg}-contracts-git"
 )
 _pkgdesc=(
   "Distributed, decentralized,"
@@ -27,7 +29,7 @@ _pkgdesc=(
   "designed for Life and DogeOS."
 )
 pkgdesc="${_pkgdesc[*]}"
-url="https://www.humaninstrumentalityproject.org"
+url="https://www.${_Proj}.org"
 pkgver=0.1.1.r29.g9f94831
 pkgrel=1
 license=(
@@ -41,9 +43,9 @@ _arch="gitlab.archlinux.org"
 _gh="github.com"
 _host="${_gh}"
 _ns="${_gh_ns}"
-_ssh="ssh://git@${_host}:${_ns}/${_pkgbase}"
-_local="file://${HOME}/${_pkgbase}"
-_http="https://${_host}/${_ns}/${_pkgbase}"
+_ssh="ssh://git@${_host}:${_ns}/${_pkg}"
+_local="file://${HOME}/${_pkg}"
+_http="https://${_host}/${_ns}/${_pkg}"
 _url="${_http}"
 depends=(
   # "aspe"
@@ -67,6 +69,13 @@ if [[ "${_hardhat}" == "true" ]]; then
     "hardhat"
   )
 fi
+provides=(
+)
+conflicts=(
+)
+group=(
+  "${_proj}-git"
+)
 checkdepends=(
   'shellcheck'
 )
@@ -224,9 +233,15 @@ build() {
   fi
 }
 
-package() {
+package_ur-contracts-git() {
   local \
     _make_opts=()
+  provides+=(
+    "${_pkg}-contracts=${pkgver}"
+  )
+  conflicts+=(
+    "${_pkg}-contracts"
+  )
   _make_opts=(
     DESTDIR="${pkgdir}"
     PREFIX='/usr'
@@ -235,7 +250,10 @@ package() {
     "${_tarname}"
   make \
     "${_make_opts[@]}" \
-    install
+    install-contracts-sources
+  make \
+    "${_make_opts[@]}" \
+    install-contracts-deployments-config
   if [[ "${_solc}" == "true" ]]; then
     make \
       "${_make_opts[@]}" \
@@ -246,6 +264,32 @@ package() {
       "${_make_opts[@]}" \
       install-contracts-deployments-hardhat
   fi
+}
+
+package_ur() {
+  local \
+    _make_opts=()
+  depends+=(
+    "${_pkg}-contracts=${pkgver}"
+  )
+  provides+=(
+    "${_pkg}=${pkgver}"
+  )
+  conflicts+=(
+    "${_pkg}"
+  )
+  _make_opts=(
+    DESTDIR="${pkgdir}"
+    PREFIX='/usr'
+  )
+  cd \
+    "${_tarname}"
+  make \
+    "${_make_opts[@]}" \
+    install-scripts
+  make \
+    "${_make_opts[@]}" \
+    install-doc
 }
 
 # vim:set sw=2 sts=-1 et:
