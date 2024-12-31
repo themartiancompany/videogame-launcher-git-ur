@@ -4,19 +4,37 @@
 # Maintainer: Truocolo <truocolo@aol.com>
 # Contributor: Fabio Castelli (muflone) <webreg@muflone.com>
 
+_os="$( \
+  uname \
+    -o)"
+_git='true'
+_offline='false'
+_solc="true"
+_hardhat="true"
+_proj="hip"
+_pkg=ur
+_pkgbase="${_pkg}"
+_pkgname="${_pkgbase}"
 _offline="false"
-_pkgbase=ur
 pkgbase="${_pkgbase}-git"
 pkgname=(
   "${pkgbase}"
 )
-pkgdesc="(A)ur helper"
+_pkgdesc=(
+  "Distributed, decentralized,"
+  "uncensorable, cross-platform"
+  "user repository and application store"
+  "designed for Life and DogeOS."
+)
+pkgdesc="${_pkgdesc[*]}"
 url="https://www.humaninstrumentalityproject.org"
 pkgver="0.1.1"
-pkgrel=2
+pkgrel=1
 license=(
   'AGPL3'
 )
+_branch="master"
+_tarname="${_pkg}-${_branch}"
 _arch_ns="tallero"
 _gh_ns="themartiancompany"
 _arch="gitlab.archlinux.org"
@@ -28,32 +46,102 @@ _local="file://${HOME}/${_pkgbase}"
 _http="https://${_host}/${_ns}/${_pkgbase}"
 _url="${_http}"
 depends=(
-  "aspe"
+  # "aspe"
   "libcrash-bash"
-  "reallymakepkg"
-  "sus"
+  "lur"
+  "pub"
+  # "reallymakepkg"
+  # "sus"
 )
 makedepends=(
-  'git'
+  'evm-make'
+  'make'
 )
+if [[ "${_solc}" == "true" ]]; then
+  makedepends+=(
+    "solidity=0.8.24"
+  )
+fi
+if [[ "${_hardhat}" == "true" ]]; then
+  makedepends+=(
+    "hardhat"
+  )
+fi
 checkdepends=(
   'shellcheck'
-)
-optdepends=(
-  'git'
 )
 arch=(
   any
 )
-[[ "${_offline}" == "true" ]] && \
+_url="${url}"
+if [[ "${_offline}" == true ]]; then
   _url="${_local}"
-_branch="master"
+fi
+if [[ "${_git}" == true ]]; then
+  makedepends+=(
+    'git'
+  )
+  _src="${_tarname}::git+${_url}#branch=${_branch}"
+elif [[ "${_git}" == false ]]; then
+  makedepends+=(
+    'curl'
+    'jq'
+  )
+  _src="${_tarname}.tar.gz::${_url}/archive/refs/heads/${_branch}.tar.gz"
+fi
 source=(
-  "${pkgname}::git+${_url}#branch=${_branch}"
+  "${_src}"
 )
 sha256sums=(
   'SKIP'
 )
+
+_nth() {
+  local \
+    _str="${1}" \
+    _n="${2}"
+  echo \
+    "${_str}" | \
+    awk \
+      -F '+' \
+      '{print $'"${_n}"'}'
+}
+
+_jq_pkgver() {
+  local \
+    _version \
+    _rev \
+    _commit
+  _version="$( \
+    curl \
+      --silent \
+      "${_gh_api}/tags" | \
+      jq \
+        '.[0].name')"
+  _version_commit="$( \
+    curl \
+      --silent \
+      "${_gh_api}/tags" | \
+      jq \
+        '.[0].commit.sha')"
+  _rev="$( \
+    curl \
+      --silent \
+      "${_gh_api}/commits" | \
+      jq \
+        'map(.sha == '${_version_commit}' ) | index(true)')"
+  _commit="$( \
+    curl \
+      --silent \
+      "${_gh_api}/commits" | \
+      jq \
+        '.[0].sha')"
+  printf \
+    "%s.r%s.g%s" \
+    "${_version}" \
+    "${_rev}" \
+    "${_commit}"
+}
 
 _parse_ver() {
   local \
@@ -63,23 +151,17 @@ _parse_ver() {
     _rev \
     _commit
   _ver="$( \
-    echo \
-      "${_pkgver}" | \
-          awk \
-            -F '+' \
-            '{print $1}')"
+    _nth \
+      "${_pkgver}" \
+      "1")"
   _rev="$( \
-    echo \
-      "${_pkgver}" | \
-      awk \
-        -F '+' \
-        '{print $2}')"
+    _nth \
+      "${_pkgver}" \
+      "2")"
   _commit="$( \
-    echo \
-      "${_pkgver}" | \
-      awk \
-        -F '+' \
-        '{print $3}')"
+    _nth \
+      "${_pkgver}" \
+      "3")"
   _out=${_ver}
   [[ "${_rev}" != "" ]] && \
     _out+=".r${_rev}"
@@ -89,19 +171,28 @@ _parse_ver() {
     "${_out}"
 }
 
-pkgver() {
+_git_pkgver() {
   local \
     _pkgver
-  cd \
-    "${pkgname}"
   _pkgver="$( \
     git \
       describe \
-      --tags | \
+      --tags \
+      --long | \
       sed \
         's/-/+/g')"
   _parse_ver \
     "${_pkgver}"
+}
+
+pkgver() {
+  cd \
+    "${_tarname}"
+  if [[ "${_git}" == true ]]; then
+    _git_pkgver
+  elif [[ "${_git}" == false ]]; then
+    _jq_pkgver
+  fi
 }
 
 check() {
@@ -112,17 +203,43 @@ check() {
     check
 }
 
+build() {
+  cd \
+    "${_tarname}"
+  if [[ "${_solc}" == "true" ]]; then
+    SOLIDITY_COMPILER_BACKEND="solc" \
+    make \
+      all
+  fi
+  if [[ "${_hardhat}" == "true" ]]; then
+    SOLIDITY_COMPILER_BACKEND="hardhat" \
+    make \
+     all
+  fi
+}
+
 package() {
-  local _opts=()
-  _opts=(
+  local \
+    _make_opts=()
+  _make_opts=(
     DESTDIR="${pkgdir}"
     PREFIX='/usr'
   )
   cd \
-    "${pkgname}"
+    "${_tarname}"
   make \
-    "${_opts[@]}" \
+    "${_make_opts[@]}" \
     install
+  if [[ "${_solc}" == "true" ]]; then
+    make \
+      "${_make_opts[@]}" \
+      install-contracts-deployments-solc
+  fi
+  if [[ "${_hardhat}" == "true" ]]; then
+    make \
+      "${_make_opts[@]}" \
+      install-contracts-deployments-hardhat
+  fi
 }
 
 # vim:set sw=2 sts=-1 et:

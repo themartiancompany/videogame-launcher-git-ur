@@ -1,7 +1,6 @@
 # `ur-git`
 
-[`ur`](https://github.com/themartiancompany/ur)
+universal recipe for [user repo](../themartiancompany/ur).
 
-## License
-
-Released under the GNU Affero General Public License.
+[PKGBUILD](PKGBUILD)
+[LICENSE](COPYING)
