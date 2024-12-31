@@ -28,7 +28,7 @@ _pkgdesc=(
 )
 pkgdesc="${_pkgdesc[*]}"
 url="https://www.humaninstrumentalityproject.org"
-pkgver="0.1.1"
+pkgver=0.1.1.r29.g9f94831
 pkgrel=1
 license=(
   'AGPL3'
@@ -71,9 +71,8 @@ checkdepends=(
   'shellcheck'
 )
 arch=(
-  any
+  'any'
 )
-_url="${url}"
 if [[ "${_offline}" == true ]]; then
   _url="${_local}"
 fi
@@ -204,17 +203,24 @@ check() {
 }
 
 build() {
+  local \
+    _make_opts=()
+  _make_opts=(
+    --debug
+  )
   cd \
     "${_tarname}"
   if [[ "${_solc}" == "true" ]]; then
     SOLIDITY_COMPILER_BACKEND="solc" \
     make \
+      "${_make_opts[@]}" \
       all
   fi
   if [[ "${_hardhat}" == "true" ]]; then
     SOLIDITY_COMPILER_BACKEND="hardhat" \
     make \
-     all
+      "${_make_opts[@]}" \
+      all
   fi
 }
 
