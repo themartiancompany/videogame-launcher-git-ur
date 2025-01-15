@@ -30,7 +30,7 @@ _pkgdesc=(
 )
 pkgdesc="${_pkgdesc[*]}"
 url="https://www.${_Proj}.org"
-pkgver=0.1.1.r32.g9c92c20
+pkgver=0.1.1.r36.g4d6ca23
 pkgrel=1
 license=(
   'AGPL3'
