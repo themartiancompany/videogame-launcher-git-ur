@@ -103,17 +103,15 @@ if [[ "${_hardhat}" == "true" ]]; then
     "hardhat"
   )
 fi
-provides=(
-  "${pkgbase}=${pkgver}"
-)
-conflicts=(
-  "${pkgbase}"
-)
 group=(
   "${_proj}-git"
 )
 checkdepends=(
   'shellcheck'
+)
+provides=(
+)
+conflicts=(
 )
 arch=(
   'any'
@@ -274,6 +272,12 @@ build() {
 package_evm-contracts-source-index-contracts-git() {
   local \
     _make_opts=()
+  provides+=(
+    "${_pkg}-contracts=${pkgver}"
+  )
+  conflicts+=(
+    "${_pkg}-contracts"
+  )
   _make_opts=(
     DESTDIR="${pkgdir}"
     PREFIX='/usr'
@@ -304,6 +308,12 @@ package_evm-contracts-source-index-git() {
   depends+=(
     "${_pkg}-contracts"
   )
+  provides+=(
+    "${_pkg}=${pkgver}"
+  )
+  conflicts+=(
+    "${_pkg}"
+  )
   _make_opts=(
     DESTDIR="${pkgdir}"
     PREFIX='/usr'
@@ -318,6 +328,12 @@ package_evm-contracts-source-index-git() {
 package_evm-contracts-source-index-docs-git() {
   local \
     _make_opts=()
+  provides+=(
+    "${_pkg}-docs=${pkgver}"
+  )
+  conflicts+=(
+    "${_pkg}-docs"
+  )
   _make_opts=(
     DESTDIR="${pkgdir}"
     PREFIX='/usr'
