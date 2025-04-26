@@ -19,49 +19,36 @@
 #    You should have received a copy of the GNU Affero General Public License
 #    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-# Maintainer: Pellegrino Prevete (dvorak) <pellegrinoprevete@gmail.com>
 # Maintainer: Truocolo <truocolo@aol.com>
+# Maintainer: Truocolo <truocolo@0x6E5163fC4BFc1511Dbe06bB605cc14a3e462332b>
+# Maintainer: Pellegrino Prevete (dvorak) <pellegrinoprevete@gmail.com>
+# Maintainer: Pellegrino Prevete (dvorak) <dvorak@0x87003Bd6C074C713783df04f36517451fF34CBEf>
 
 _os="$( \
   uname \
     -o)"
 _git='true'
 _offline='false'
-_solc="true"
-_hardhat="true"
 _proj="hip"
 _Proj="humaninstrumentalityproject"
 _py="python"
-_contracts="true"
 _docs="true"
-_pkg=evm-contracts-source-index
+_pkg=videogame-launcher
 _pkgbase="${_pkg}"
 _offline="false"
 pkgbase="${_pkg}-git"
 pkgname=(
   "${pkgbase}"
 )
-if [[ "${_contracts}" == "true" ]]; then
-  pkgname+=(
-    "${_pkg}-contracts-git"
-  )
-fi
 if [[ "${_docs}" == "true" ]]; then
   pkgname+=(
     "${_pkg}-docs-git"
   )
 fi
 _pkgdesc=(
-  "Distributed, decentralized,"
-  "uncensorable, network-neutral"
-  "network-independent Ethereum Virtual"
-  "Machine (EVM) smart contracts source"
-  "code index and repository using the"
-  "Ethereum Virtual Machine File"
-  "System (EVMFS) for resources hosting."
+  "Seamlessly launch video games."
 )
 pkgdesc="${_pkgdesc[*]}"
-url="https://${_pkg}.${_Proj}.org"
 pkgver=0.1.1.r36.g4d6ca23
 pkgrel=1
 license=(
@@ -79,30 +66,13 @@ _ssh="ssh://git@${_host}:${_ns}/${_pkg}"
 _local="file://${HOME}/${_pkg}"
 _http="https://${_host}/${_ns}/${_pkg}"
 _url="${_http}"
+url="${_url}"
 depends=(
-  "evm-contracts-tools"
-  "evm-gnupg"
-  "evm-openpgp-keyserver"
-  "evm-wallet"
-  "evmfs"
-  "libcrash-bash"
-  "libevm"
 )
 makedepends=(
-  'evm-make'
   'make'
   "${_py}-docutils"
 )
-if [[ "${_solc}" == "true" ]]; then
-  makedepends+=(
-    "solidity=0.8.28"
-  )
-fi
-if [[ "${_hardhat}" == "true" ]]; then
-  makedepends+=(
-    "hardhat"
-  )
-fi
 group=(
   "${_proj}-git"
 )
@@ -245,68 +215,11 @@ check() {
     check
 }
 
-build() {
-  local \
-    _make_opts=()
-  _make_opts=(
-    --debug
-  )
-  cd \
-    "${_tarname}"
-  if [[ "${_contracts}" == "true" ]]; then
-    if [[ "${_solc}" == "true" ]]; then
-      SOLIDITY_COMPILER_BACKEND="solc" \
-      make \
-        "${_make_opts[@]}" \
-        all
-    fi
-    if [[ "${_hardhat}" == "true" ]]; then
-      SOLIDITY_COMPILER_BACKEND="hardhat" \
-      make \
-        "${_make_opts[@]}" \
-        all
-    fi
-  fi
-}
-
-package_evm-contracts-source-index-contracts-git() {
-  local \
-    _make_opts=()
-  provides+=(
-    "${_pkg}-contracts=${pkgver}"
-  )
-  conflicts+=(
-    "${_pkg}-contracts"
-  )
-  _make_opts=(
-    DESTDIR="${pkgdir}"
-    PREFIX='/usr'
-  )
-  cd \
-    "${_tarname}"
-  make \
-    "${_make_opts[@]}" \
-    install-contracts-sources
-  make \
-    "${_make_opts[@]}" \
-    install-contracts-deployments-config
-  if [[ "${_solc}" == "true" ]]; then
-    make \
-      "${_make_opts[@]}" \
-      install-contracts-deployments-solc
-  fi
-  if [[ "${_hardhat}" == "true" ]]; then
-    make \
-      "${_make_opts[@]}" \
-      install-contracts-deployments-hardhat
-  fi
-}
-
-package_evm-contracts-source-index-git() {
+package_videogame-launcher-git() {
   local \
     _make_opts=()
   depends+=(
-    "${_pkg}-contracts"
+    "libcrash-bash"
   )
   provides+=(
     "${_pkg}=${pkgver}"
@@ -325,7 +238,7 @@ package_evm-contracts-source-index-git() {
     install-scripts
 }
 
-package_evm-contracts-source-index-docs-git() {
+package_videogame-launcher-docs-git() {
   local \
     _make_opts=()
   provides+=(

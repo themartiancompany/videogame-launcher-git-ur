@@ -19,7 +19,7 @@
 [comment]: <> (License along with this program.)
 [comment]: <> (If not, see <https://www.gnu.org/licenses/>.)
 
-# `evm-contracts-source-index-git`
+# `videogame-launcher-git`
 
 universal recipe for
 [user repo](
