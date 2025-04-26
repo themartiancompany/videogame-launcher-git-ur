@@ -235,6 +235,9 @@ package_videogame-launcher-git() {
     "${_tarname}"
   make \
     "${_make_opts[@]}" \
+    install-configs
+  make \
+    "${_make_opts[@]}" \
     install-scripts
 }
 
